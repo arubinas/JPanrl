@@ -1,0 +1,80 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class BankBalanceApp {
+    private JFrame frame;
+    private JPanel panel;
+    private JTextField balanceField;
+    private JTextField depositField;
+    private JTextField withdrawField;
+    private JButton submitButton;
+    private double balance = 0.0;
+
+    public BankBalanceApp() {
+        frame = new JFrame("Bank Balance Application");
+        panel = new JPanel();
+        panel.setLayout(new GridLayout(5, 2, 10, 10));
+
+        // Create and add components to the panel
+        JLabel balanceLabel = new JLabel("Current Balance:");
+        balanceField = new JTextField(15);
+        balanceField.setEditable(false);
+        balanceField.setText(String.format("%.2f", balance));
+
+        JLabel depositLabel = new JLabel("Deposit Amount:");
+        depositField = new JTextField(15);
+
+        JLabel withdrawLabel = new JLabel("Withdraw Amount:");
+        withdrawField = new JTextField(15);
+
+        submitButton = new JButton("Submit");
+
+        panel.add(balanceLabel);
+        panel.add(balanceField);
+        panel.add(depositLabel);
+        panel.add(depositField);
+        panel.add(withdrawLabel);
+        panel.add(withdrawField);
+        panel.add(submitButton);
+
+        // Add ActionListener to the submit button
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    double depositAmount = Double.parseDouble(depositField.getText());
+                    double withdrawAmount = Double.parseDouble(withdrawField.getText());
+
+                    if (depositAmount < 0 && withdrawAmount < 0) {
+                        JOptionPane.showMessageDialog(frame, "Please enter a positive amount for deposit or withdraw.");
+                    } else {
+                        if (depositAmount > 0) {
+                            balance += depositAmount;
+                        }
+                        if (withdrawAmount > 0) {
+                            if (balance >= withdrawAmount) {
+                                balance -= withdrawAmount;
+                            } else {
+                                JOptionPane.showMessageDialog(frame, "Insufficient balance for withdrawal.");
+                            }
+                        }
+                        balanceField.setText(String.format("%.2f", balance));
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(frame, "Invalid amount entered. Please enter a valid number.");
+                }
+            }
+        });
+
+        frame.getContentPane().add(panel);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(300, 200);
+        frame.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new BankBalanceApp());
+    }
+}
